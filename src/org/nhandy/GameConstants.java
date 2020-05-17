@@ -8,9 +8,9 @@ public class GameConstants {
              powerups resolution = 16x8 with an optional shadow of 18x9
              enemy resolution = 16x16
     * */
-    public static final int WORLD_WIDTH = 2016;
-    public static final int WORLD_HEIGHT = 2016;
-    public static final int SCREEN_WIDTH = 1300;
+    public static final int WORLD_WIDTH = 224; // src 224
+    public static final int WORLD_HEIGHT = 240; // src 240
+    public static final int SCREEN_WIDTH = 896;
     public static final int SCREEN_HEIGHT = 960;
     public static final double UPDATE_CAP = 1.0 / 144.0;
 }

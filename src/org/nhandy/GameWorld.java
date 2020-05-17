@@ -1,8 +1,10 @@
 package org.nhandy;
 
 import org.nhandy.gameobjects.GameObject;
-import org.nhandy.gameobjects.movable.vehicles.Tank;
-import org.nhandy.gameobjects.movable.vehicles.TankControl;
+import org.nhandy.gameobjects.movable.ball.Ball;
+import org.nhandy.gameobjects.movable.paddle.Paddle;
+import org.nhandy.gameobjects.movable.paddle.PaddleControl;
+import org.nhandy.gameobjects.stationary.Background;
 import org.nhandy.resource_loaders.MapLoader;
 import org.nhandy.resource_loaders.Resource;
 
@@ -11,15 +13,10 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
- * Main driver class of Tank Example.
- * Class is responsible for loading resources and
- * initializing game objects. Once completed, control will
- * be given to infinite loop which will act as our game loop.
- * A very simple game loop.
+
  * @author Nick Handy
  */
 
@@ -39,8 +36,7 @@ public class GameWorld extends JPanel  {
     private Graphics2D buffer;
     private JFrame jFrame;
     private MapLoader mapLoader;
-    private Camera cameraOne;
-    private Camera cameraTwo;
+    private Paddle paddleOne;
     public static int framesPerSec;
     ArrayList<GameObject> gameObjects;
     // List<Collidable> collidableObjects;
@@ -96,8 +92,8 @@ public class GameWorld extends JPanel  {
                 game.gameObjects.forEach(gameObject -> gameObject.update());
 
 
-                game.cameraOne.update();
-                game.cameraTwo.update();
+//                game.cameraOne.update();
+//                game.cameraTwo.update();
 
                 // gameObjects.hasCollided()
 
@@ -105,7 +101,7 @@ public class GameWorld extends JPanel  {
                     frameTime = 0;
                     framesPerSec = frames;
                     frames = 0;
-                    //System.out.printf("FPS: %d\n", framesPerSec);
+                    System.out.printf("FPS: %d\n", framesPerSec);
                 }
 
 
@@ -128,41 +124,38 @@ public class GameWorld extends JPanel  {
 
 
     private void init() {
-        this.jFrame = new JFrame("Tank Rotation");
+        this.jFrame = new JFrame("Doh Doh");
         this.world = new BufferedImage(GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT, BufferedImage.TYPE_INT_RGB);
         gameObjects = new ArrayList<>();
+
+        Background background = new Background(0,0, Resource.getResourceImage("backgroundLevel1"));
+        this.gameObjects.add(background);
 
         this.mapLoader = new MapLoader();
         this.mapLoader.loadMap(gameObjects);
 
-        Tank tankOne = new Tank(GameConstants.WORLD_WIDTH/2, GameConstants.WORLD_WIDTH/2, 0, 0, 0, Resource.getResourceImage("tankBlue"));
-        Tank tankTwo = new Tank(GameConstants.WORLD_WIDTH - 150 ,GameConstants.WORLD_HEIGHT - 150,0,0, 0, Resource.getResourceImage("tankRed"));
+        paddleOne = new Paddle(GameConstants.WORLD_WIDTH/2, GameConstants.WORLD_HEIGHT-16, Resource.getResourceImage("defaultPaddle1A"));
 
-
-        TankControl tankOneControl = new TankControl(tankOne, KeyEvent.VK_UP,
-                KeyEvent.VK_DOWN,
+        PaddleControl paddleOneControl = new PaddleControl(paddleOne,
                 KeyEvent.VK_LEFT,
                 KeyEvent.VK_RIGHT,
-                KeyEvent.VK_NUMPAD0);
-
-        TankControl tankTwoControl = new TankControl(tankTwo, KeyEvent.VK_W,
-                KeyEvent.VK_S,
-                KeyEvent.VK_A,
-                KeyEvent.VK_D,
                 KeyEvent.VK_SPACE);
 
-        this.gameObjects.add(tankOne);
-        this.gameObjects.add(tankTwo);
 
-        cameraOne = new Camera(tankOne, tankOne.getX(), tankOne.getY());
-        cameraTwo = new Camera(tankTwo, tankTwo.getX(), tankTwo.getY());
+        this.gameObjects.add(paddleOne);
+        this.gameObjects.add(paddleOne);
+
+        Ball ballOne = new Ball(paddleOne.getX() + 16, paddleOne.getY(), Resource.getResourceImage("defaultBall"));
+        this.gameObjects.add(ballOne);
+
+//        cameraOne = new Camera(paddleOne, paddleOne.getX(), paddleOne.getY());
 
         this.jFrame.setLayout(new BorderLayout());
         this.jFrame.add(this);
-        this.jFrame.addKeyListener(tankOneControl);
-        this.jFrame.addKeyListener(tankTwoControl);
-        this.jFrame.setTitle("TANKS");
-        this.jFrame.setSize(GameConstants.SCREEN_WIDTH, GameConstants.SCREEN_HEIGHT + 30);
+        this.jFrame.addKeyListener(paddleOneControl);
+
+        this.jFrame.setTitle("Paddles");
+        this.jFrame.setSize(GameConstants.SCREEN_WIDTH + 16, GameConstants.SCREEN_HEIGHT + 30);
         this.jFrame.setResizable(false);
         jFrame.setLocationRelativeTo(null);
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -178,20 +171,25 @@ public class GameWorld extends JPanel  {
         super.paintComponent(g2);
         buffer = world.createGraphics();
         buffer.setColor(Color.BLACK);
-        buffer.fillRect(0,0, GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT + 10);
+        buffer.fillRect(0,0, GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT);
 
         this.gameObjects.forEach(gameObjects -> gameObjects.drawImage(buffer));
 
-        BufferedImage leftHalf = world.getSubimage(cameraOne.getCamX(),cameraOne.getCamY(),GameConstants.SCREEN_WIDTH/2, GameConstants.SCREEN_HEIGHT);
-        BufferedImage rightHalf = world.getSubimage(cameraTwo.getCamX(),cameraTwo.getCamY(),GameConstants.SCREEN_WIDTH/2, GameConstants.SCREEN_HEIGHT);
+        g2.scale(4,4);
+        g2.drawImage(world,0,0,null);
 
-        BufferedImage miniMap = world.getSubimage(0,0,GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT);
-        g2.drawImage(leftHalf,0,0,null);
-        g2.drawImage(rightHalf,GameConstants.SCREEN_WIDTH/2 + 4,0,null);
+        // Multiplayer Cameras
+//        BufferedImage leftHalf = world.getSubimage(cameraOne.getCamX(),cameraOne.getCamY(),GameConstants.SCREEN_WIDTH/2, GameConstants.SCREEN_HEIGHT);
+//        BufferedImage rightHalf = world.getSubimage(cameraTwo.getCamX(),cameraTwo.getCamY(),GameConstants.SCREEN_WIDTH/2, GameConstants.SCREEN_HEIGHT);
+//
+//        BufferedImage miniMap = world.getSubimage(0,0,GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT);
+//        g2.drawImage(leftHalf,0,0,null);
+//        g2.drawImage(rightHalf,GameConstants.SCREEN_WIDTH/2 + 4,0,null);
 
-        g2.scale(.1,.1);
-        g2.drawImage(miniMap, 100, 7500, null);
-        g2.scale(1,1);
+
+//        g2.scale(.1,.1);
+//        g2.drawImage(miniMap, 100, 7500, null);
+//        g2.scale(1,1);
 
 
     }

@@ -1,6 +1,6 @@
 package org.nhandy;
 
-import org.nhandy.gameobjects.movable.vehicles.Tank;
+import org.nhandy.gameobjects.movable.paddle.Paddle;
 
 // TODO: Restructure camera to just support single screen or splitscreen
 public class Camera {
@@ -8,14 +8,14 @@ public class Camera {
     private int camX, camY;
     private int offsetX;
     private int offsetY;
-    private Tank tank;
+    private Paddle paddle;
 
-    public Camera(Tank tank, int camX, int camY) {
+    public Camera(Paddle paddle, int camX, int camY) {
         this.offsetX = GameConstants.SCREEN_WIDTH/4;
         this.offsetY = GameConstants.SCREEN_HEIGHT/2;
         this.camX = camX - offsetX;
         this.camY = camY - offsetY;
-        this.tank = tank;
+        this.paddle = paddle;
     }
 
     public int getCamX() {
@@ -26,8 +26,8 @@ public class Camera {
     }
 
     public void update() {
-        this.camX = tank.getX() - offsetX;
-        this.camY = tank.getY() - offsetY;
+        this.camX = paddle.getX() - offsetX;
+        this.camY = paddle.getY() - offsetY;
 
         checkBounds();
     }
@@ -53,7 +53,7 @@ public class Camera {
                 ", camY=" + camY +
                 ", offsetX=" + offsetX +
                 ", offsetY=" + offsetY +
-                ", tank=" + tank +
+                ", paddle=" + paddle +
                 '}';
     }
 }

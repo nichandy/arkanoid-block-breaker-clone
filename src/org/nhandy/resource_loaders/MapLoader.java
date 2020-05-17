@@ -2,11 +2,7 @@ package org.nhandy.resource_loaders;
 
 import org.nhandy.GameWorld;
 import org.nhandy.gameobjects.GameObject;
-import org.nhandy.gameobjects.stationary.powerups.HealthPowerUp;
-import org.nhandy.gameobjects.stationary.powerups.ShieldPowerUp;
-import org.nhandy.gameobjects.stationary.powerups.WeaponPowerUp;
-import org.nhandy.gameobjects.stationary.walls.BreakWall;
-import org.nhandy.gameobjects.stationary.walls.unBreakWall;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,26 +34,26 @@ public class MapLoader {
                 for(int curCol = 0; curCol < numCols; curCol++) {
                     switch(mapInfo[curCol]) {
                         // TODO: Replace with new spritesheet and map images
-                        case "2":
-                            BreakWall br = new BreakWall(curCol*32, curRow*32, Resource.getResourceImage("breakWall"));
-                            gameObjects.add(br);
-                            break;
-                        case "3":
-                            HealthPowerUp hp = new HealthPowerUp(curCol*32, curRow*32, Resource.getResourceImage("healthPowerUp"));
-                            gameObjects.add(hp);
-                            break;
-                        case "4":
-                            WeaponPowerUp wp = new WeaponPowerUp(curCol*32, curRow*32, Resource.getResourceImage("weaponPowerUp"));
-                            gameObjects.add(wp);
-                            break;
-                        case "5":
-                            ShieldPowerUp sp = new ShieldPowerUp(curCol*32, curRow*32, Resource.getResourceImage("shieldPowerUp"));
-                            gameObjects.add(sp);
-                            break;
-                        case "9":
-                            unBreakWall ubr = new unBreakWall(curCol*32, curRow*32, Resource.getResourceImage("unBreakWall"));
-                            gameObjects.add(ubr);
-                            break;
+//                        case "2":
+//                            BreakWall br = new BreakWall(curCol*32, curRow*32, Resource.getResourceImage("breakWall"));
+//                            gameObjects.add(br);
+//                            break;
+//                        case "3":
+//                            HealthPowerUp hp = new HealthPowerUp(curCol*32, curRow*32, Resource.getResourceImage("healthPowerUp"));
+//                            gameObjects.add(hp);
+//                            break;
+//                        case "4":
+//                            WeaponPowerUp wp = new WeaponPowerUp(curCol*32, curRow*32, Resource.getResourceImage("weaponPowerUp"));
+//                            gameObjects.add(wp);
+//                            break;
+//                        case "5":
+//                            ShieldPowerUp sp = new ShieldPowerUp(curCol*32, curRow*32, Resource.getResourceImage("shieldPowerUp"));
+//                            gameObjects.add(sp);
+//                            break;
+//                        case "9":
+//                            unBreakWall ubr = new unBreakWall(curCol*32, curRow*32, Resource.getResourceImage("unBreakWall"));
+//                            gameObjects.add(ubr);
+//                            break;
                     }
                 }
             }
