@@ -1,7 +1,10 @@
 package org.nhandy.gameobjects.movable.ball;
 
 import org.nhandy.GameConstants;
+import org.nhandy.Observable;
+import org.nhandy.gameobjects.Collidable;
 import org.nhandy.gameobjects.movable.MovableObject;
+import org.nhandy.gameobjects.movable.powerups.PowerUp;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,7 +14,7 @@ public class Ball extends MovableObject {
     private int y;
     private int vx;
     private int vy;
-    private int angle;
+    private int angle = -90;
 
 
     private double moveSpeed = 1.0;
@@ -29,13 +32,21 @@ public class Ball extends MovableObject {
     private BufferedImage ballImage;
     private Rectangle hitBox;
     private boolean drawable;
+    private boolean collidable;
 
     public Ball(int x, int y, BufferedImage ballImage) {
         this.x = x;
         this.y = y;
         this.ballImage = ballImage;
         this.hitBox = new Rectangle(x, y, this.ballImage.getWidth() - 3, this.ballImage.getHeight()/2); // sprite is 8x8, hitbox is 5x4
-        //this.setAngle(90);
+        setDrawable(true);
+    }
+
+    @Override
+    public void update(Observable obv) {
+        moveForward();
+        checkBorder();
+        this.hitBox.setLocation(x, y);
     }
 
     public Rectangle getHitBox() {
@@ -75,26 +86,42 @@ public class Ball extends MovableObject {
     }
 
 
-
-    public void update() {
-        moveForward();
-        checkBorder();
-        this.hitBox.setLocation(x, y);
-        //System.out.println(this);
-    }
-
     public void checkBorder() {
         if (x < 8) {
             x = 8;
+            // TODO: angle reflection based on normal in line with x axis
         }
         if (x >= GameConstants.WORLD_WIDTH - (this.ballImage.getWidth() + 5)) {
             x = GameConstants.WORLD_WIDTH - (this.ballImage.getWidth() + 5);
+            // TODO: angle reflection based on normal in line with -x axis
         }
-        if (y < 8) {
-            y = 8;
+        if (y < 7) {
+            y = 7;
+            // TODO: angle reflection based on normal in line with -y axis
+
         }
         if (y >= GameConstants.WORLD_HEIGHT - (this.ballImage.getHeight() / 2)) {
             // TODO: send message that a ball has got past paddle. It will depend on the situation to decide what you need to do.
+            // TODO: Notify that a ball has been lost
+            //y = GameConstants.WORLD_HEIGHT - (this.ballImage.getHeight() / 2);
+            setDrawable(false);
+        }
+    }
+
+    @Override
+    public void setCollidable(boolean canCollide) {
+        this.collidable = canCollide;
+    }
+
+    @Override
+    public boolean isCollidable() {
+        return this.collidable;
+    }
+
+    @Override
+    public void handleCollision(Collidable cObj) {
+        if (cObj instanceof PowerUp) {
+            // alter paddle state by applying powerup
         }
     }
 

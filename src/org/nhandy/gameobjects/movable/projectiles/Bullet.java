@@ -1,6 +1,8 @@
 package org.nhandy.gameobjects.movable.projectiles;
 
 import org.nhandy.GameConstants;
+import org.nhandy.Observable;
+import org.nhandy.gameobjects.Collidable;
 import org.nhandy.gameobjects.movable.MovableObject;
 
 import java.awt.*;
@@ -15,6 +17,7 @@ public class Bullet extends MovableObject {
     private BufferedImage bulletImage;
     private Rectangle hitBox;
     private boolean drawable;
+    private boolean collidable;
 
     public Bullet(int x, int y, BufferedImage bulletImage) {
         this.x = x;
@@ -28,32 +31,53 @@ public class Bullet extends MovableObject {
         return this.hitBox.getBounds();
     }
 
+    @Override
+    public void setCollidable(boolean canCollide) {
+        this.collidable = canCollide;
+    }
+
+    @Override
+    public boolean isCollidable() {
+        return this.collidable;
+    }
+
+    @Override
+    public void handleCollision(Collidable cObj) {
+//        if(cObj instanceof  Block) {
+//            // apply bullet damage, decrement block's life
+//        }
+    }
+
     public void moveForward() {
         y -= moveSpeed;
         checkBorder();
     }
 
-    public void update() {
+    @Override
+    public void update(Observable obv) {
         if(isDrawable()) {
             moveForward();
-            checkBorder();
             this.hitBox.setLocation(x, y);
         }
-        //System.out.println(this);
     }
+
 
     public void checkBorder() {
         if (x < 8) {
             x = 8;
+            setDrawable(false);
         }
         if (x >= GameConstants.WORLD_WIDTH - 8) {
             x = GameConstants.WORLD_WIDTH - 8;
+            setDrawable(false);
         }
-        if (y < 8) {
-            y = 8;
+        if (y < 5) {
+            y = 5;
+            setDrawable(false);
         }
         if (y >= GameConstants.WORLD_WIDTH - 8) {
             y = GameConstants.WORLD_WIDTH - 8;
+            setDrawable(false);
         }
     }
 
@@ -87,5 +111,4 @@ public class Bullet extends MovableObject {
 //        g2d.setColor(Color.CYAN);
 //        g2d.drawRect(x,y, this.bulletImage.getWidth(), this.bulletImage.getHeight());
     }
-
 }

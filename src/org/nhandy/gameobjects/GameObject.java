@@ -1,12 +1,12 @@
 package org.nhandy.gameobjects;
 
-import org.nhandy.Drawable;
+import org.nhandy.Observable;
 
 import java.awt.*;
 
-public abstract class GameObject implements Drawable {
+public abstract class GameObject implements Drawable, Observer {
 
-    public abstract void update();
+    public abstract void update(Observable obv);
 
     public abstract Rectangle getHitBox();
 

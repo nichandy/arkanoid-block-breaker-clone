@@ -1,5 +1,8 @@
 package org.nhandy.gameobjects.stationary;
 
+import org.nhandy.Observable;
+import org.nhandy.gameobjects.Collidable;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -21,14 +24,22 @@ public class Background extends StaticObject {
     }
 
     @Override
-    public void update() {
+    public void update(Observable obv) {}
 
-    }
-
+    // Background is not collidable
     @Override
     public Rectangle getHitBox() {
         return null;
     }
+
+    @Override
+    public void setCollidable(boolean canCollide) {}
+
+    @Override
+    public boolean isCollidable() { return false; }
+
+    @Override
+    public void handleCollision(Collidable cObj) {}
 
     @Override
     public void setDrawable(boolean canDraw) {

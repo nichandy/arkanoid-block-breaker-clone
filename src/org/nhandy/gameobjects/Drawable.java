@@ -1,4 +1,4 @@
-package org.nhandy;
+package org.nhandy.gameobjects;
 
 import java.awt.*;
 

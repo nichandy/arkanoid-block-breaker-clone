@@ -1,5 +1,8 @@
 package org.nhandy.gameobjects.hudobjects;
 
+import org.nhandy.Observable;
+import org.nhandy.gameobjects.Observer;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -41,8 +44,9 @@ public class HealthBar extends hudObject {
         }
     }
 
+
     @Override
-    public void update() {}
+    public void update(Observable obv) {}
 
     @Override
     public Rectangle getHitBox() {return null;}

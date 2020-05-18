@@ -1,19 +1,20 @@
 package org.nhandy.resource_loaders;
 
 import org.nhandy.GameWorld;
-import org.nhandy.gameobjects.GameObject;
+import org.nhandy.gameobjects.Collidable;
+import org.nhandy.gameobjects.Drawable;
 
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.List;
 
 public class MapLoader {
 
     public MapLoader() {}
 
-    public void loadMap(ArrayList<GameObject> gameObjects) {
+    public void loadMap(List<Drawable> drawables, List<Collidable> collidables) {
         try {
 
             InputStreamReader isr = new InputStreamReader(GameWorld.class.getClassLoader().getResourceAsStream("maps/map-1.csv"));
@@ -36,7 +37,8 @@ public class MapLoader {
                         // TODO: Replace with new spritesheet and map images
 //                        case "2":
 //                            BreakWall br = new BreakWall(curCol*32, curRow*32, Resource.getResourceImage("breakWall"));
-//                            gameObjects.add(br);
+//                            drawables.add(br);
+//                            collidables.add(br);
 //                            break;
 //                        case "3":
 //                            HealthPowerUp hp = new HealthPowerUp(curCol*32, curRow*32, Resource.getResourceImage("healthPowerUp"));

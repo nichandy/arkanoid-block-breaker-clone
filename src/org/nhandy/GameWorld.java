@@ -1,11 +1,11 @@
 package org.nhandy;
 
-import org.nhandy.gameobjects.GameObject;
-import org.nhandy.gameobjects.Observer;
+import org.nhandy.gameobjects.*;
 import org.nhandy.gameobjects.movable.ball.Ball;
 import org.nhandy.gameobjects.movable.paddle.Paddle;
 import org.nhandy.gameobjects.movable.paddle.PaddleControl;
 import org.nhandy.gameobjects.stationary.Background;
+import org.nhandy.gameobjects.stationary.StaticObject;
 import org.nhandy.resource_loaders.MapLoader;
 import org.nhandy.resource_loaders.Resource;
 
@@ -14,7 +14,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
@@ -42,8 +41,10 @@ public class GameWorld extends JPanel  implements Observable{
     private JFrame jFrame;
     private MapLoader mapLoader;
     private Paddle paddleOne;
-    private ArrayList<GameObject> gameObjects;
     private List<Observer> observers;
+    private List<Collidable> collidables;
+    private List<Drawable> drawables;
+    private CollisionHandler collisionHandler;
     public static int framesPerSec;
 
 
@@ -75,9 +76,8 @@ public class GameWorld extends JPanel  implements Observable{
                 unprocessedTime -= GameConstants.UPDATE_CAP;
                 render = true;
 
-                game.gameObjects.forEach(gameObject -> gameObject.update());
                 game.notifyObservers();
-                //game.checkCollisions;
+                game.checkCollisions();
 
                 if (frameTime >= 1.0) {
                     frameTime = 0;
@@ -92,14 +92,14 @@ public class GameWorld extends JPanel  implements Observable{
                 game.repaint();
                 frames++;
 
-
-                ListIterator<GameObject> itr = game.gameObjects.listIterator();
-                while(itr.hasNext()) {
-                    GameObject gameObject = itr.next();
-                    if(!gameObject.isDrawable()) {
-                        itr.remove();
-                    }
-                }
+                // Add and remove observers instead of iterating through observers
+//                ListIterator<GameObject> itr = game.gameObjects.listIterator();
+//                while(itr.hasNext()) {
+//                    GameObject gameObject = itr.next();
+//                    if(!gameObject.isDrawable()) {
+//                        itr.remove();
+//                    }
+//                }
             } else {
                 try {
                     Thread.sleep(1);
@@ -117,16 +117,20 @@ public class GameWorld extends JPanel  implements Observable{
     private void init() {
         this.jFrame = new JFrame("Doh Doh");
         this.world = new BufferedImage(GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT, BufferedImage.TYPE_INT_RGB);
-        gameObjects = new ArrayList<>();
+        collisionHandler = new CollisionHandler();
 
         this.observers = Collections.synchronizedList(new ArrayList<>());
+        this.collidables = Collections.synchronizedList(new ArrayList<>());
+        this.drawables = Collections.synchronizedList(new ArrayList<>());
 
         Background background = new Background(0,0, Resource.getResourceImage("backgroundLevel1"));
-        this.gameObjects.add(background);
+        addDrawable(background);
 
+        // Initialize Blocks
         this.mapLoader = new MapLoader();
-        this.mapLoader.loadMap(gameObjects);
+        this.mapLoader.loadMap(drawables, collidables);
 
+        // Initializing Paddle
         paddleOne = new Paddle(GameConstants.WORLD_WIDTH/2 - 16, GameConstants.WORLD_HEIGHT-24, Resource.getResourceImage("defaultPaddle1A"));
 
         PaddleControl paddleOneControl = new PaddleControl(paddleOne,
@@ -135,12 +139,15 @@ public class GameWorld extends JPanel  implements Observable{
                 KeyEvent.VK_SPACE);
 
 
-        this.gameObjects.add(paddleOne);
+        addDrawable(paddleOne);
+        addCollidable(paddleOne);
+        attachObserver(paddleOne);
 
+        // Initializing Ball
         Ball ballOne = new Ball(paddleOne.getX() + 16, paddleOne.getY(), Resource.getResourceImage("defaultBall"));
-        this.gameObjects.add(ballOne);
-
-//        cameraOne = new Camera(paddleOne, paddleOne.getX(), paddleOne.getY());
+        addDrawable(ballOne);
+        addCollidable(ballOne);
+        attachObserver(ballOne);
 
         this.jFrame.setLayout(new BorderLayout());
         this.jFrame.add(this);
@@ -155,6 +162,24 @@ public class GameWorld extends JPanel  implements Observable{
     }
 
 
+    public void checkCollisions() {
+
+        for (Collidable cObjA : this.collidables) {
+            // if cObjA is not collidable continue
+            if(cObjA instanceof StaticObject) continue; //IGNORE OBJECTS THAT DONT MOVE
+            for (Collidable cObjB : this.collidables) {
+                if(cObjA.equals(cObjB)) continue; // skip self collision check
+
+                if(!cObjB.isCollidable()) continue; // skip check if object is colliding
+                if(cObjB.getClass() == cObjA.getClass()) continue;
+                if(cObjA.getHitBox().intersects(cObjB.getHitBox().getBounds())) {
+                    cObjA.handleCollision(cObjB);
+                }
+            }
+        }
+
+    }
+
 
     @Override
     public void paintComponent(Graphics g) { // All painting code belongs here
@@ -165,7 +190,7 @@ public class GameWorld extends JPanel  implements Observable{
         buffer.setColor(Color.BLACK);
         buffer.fillRect(0,0, GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT);
 
-        this.gameObjects.forEach(gameObjects -> gameObjects.Draw(buffer));
+        this.drawables.forEach(drawable -> drawable.Draw(buffer));
 
         g2.scale(4,4);
         g2.drawImage(world,0,0,null);
@@ -186,20 +211,22 @@ public class GameWorld extends JPanel  implements Observable{
 
     }
 
-    private void checkCollisions() {
-        /*
-            1. iterate through a list of collidable objects
-            2.
-         */
+    public synchronized void addCollidable(Collidable collidable) {
+        this.collidables.add(collidable);
+    }
+
+    public synchronized void removeCollidable(Collidable collidable) {
+        this.collidables.remove(collidable);
     }
 
     public synchronized void addDrawable(Drawable drawable) {
-        //this.drawables.add(drawable);
+        this.drawables.add(drawable);
     }
 
     public synchronized void removeDrawable(Drawable drawable) {
-        //this.drawables.remove(drawable);
+        this.drawables.remove(drawable);
     }
+
     @Override
     public void setChanged() {
 

@@ -1,8 +1,13 @@
 package org.nhandy.gameobjects.movable.paddle;
 
 import org.nhandy.GameConstants;
+import org.nhandy.GameWorld;
+import org.nhandy.Observable;
+import org.nhandy.gameobjects.Collidable;
+import org.nhandy.gameobjects.Observer;
 import org.nhandy.gameobjects.hudobjects.HealthBar;
 import org.nhandy.gameobjects.movable.MovableObject;
+import org.nhandy.gameobjects.movable.powerups.PowerUp;
 import org.nhandy.gameobjects.movable.projectiles.Bullet;
 import org.nhandy.resource_loaders.Resource;
 
@@ -16,7 +21,7 @@ public class Paddle extends MovableObject {
     private int x;
     private int y;
     private final int moveSpeed = 3;
-    private boolean drawable;
+    private int health = 3;
     private int fireRate;
     // shootDelay?
     // some way to keep track of time?
@@ -30,6 +35,8 @@ public class Paddle extends MovableObject {
     private boolean RightPressed;
     private boolean LeftPressed;
     private boolean ShootPressed;
+    private boolean collidable;
+    private boolean drawable;
 
 
     public Paddle(int x, int y, BufferedImage paddleImage) {
@@ -40,7 +47,7 @@ public class Paddle extends MovableObject {
         this.ammo = new ArrayList<>();
         this.lives = new ArrayList<>();
         setDrawable(true);
-        setLives(3);
+        setLives(health);
     }
 
     public Rectangle getHitBox() {
@@ -70,7 +77,9 @@ public class Paddle extends MovableObject {
 
 
 
-    public void update() {
+    @Override
+    public void update(Observable obv) {
+        // shootdelay incremented
 
         if(isDrawable()) {
             if (this.LeftPressed) {
@@ -81,17 +90,20 @@ public class Paddle extends MovableObject {
             }
             this.hitBox.setLocation(x, y);
 
-            if (this.ShootPressed ) {
-                Bullet bulletLeft = new Bullet((int) this.getHitBox().getCenterX() - 10,y, Resource.getResourceImage("defaultBullet"));
-                Bullet bulletRight = new Bullet((int) this.getHitBox().getCenterX() + 10,y, Resource.getResourceImage("defaultBullet"));
-                this.ammo.add(bulletLeft);
-                this.ammo.add(bulletRight);
+            if (this.ShootPressed) {
+                // Interrogate an observer to get details about its state
+                //long currentTick = ((GameWorld)obv).tick;
 
-                this.lives.get(this.lives.size() - 1).setDrawable(false);
+                /*
+                if (currentTick % fireRate == 0) {
+
+                }
+                 */
+                this.shoot();
+
             }
-            this.ammo.forEach(bullet -> bullet.update());
+            this.ammo.forEach(bullet -> bullet.update(obv));
 
-            //System.out.println(this);
         }
 
     }
@@ -101,6 +113,13 @@ public class Paddle extends MovableObject {
             HealthBar life = new HealthBar(10 + (i * 16), GameConstants.WORLD_HEIGHT - 12, Resource.getResourceImage("healthBar"));
             this.lives.add(life);
         }
+    }
+
+    public void shoot() {
+        Bullet bulletLeft = new Bullet((int) this.getHitBox().getCenterX() - 10,y, Resource.getResourceImage("defaultBullet"));
+        Bullet bulletRight = new Bullet((int) this.getHitBox().getCenterX() + 10,y, Resource.getResourceImage("defaultBullet"));
+        this.ammo.add(bulletLeft);
+        this.ammo.add(bulletRight);
     }
 
 
@@ -130,8 +149,23 @@ public class Paddle extends MovableObject {
     public int getY() {
         return this.y;
     }
-    // x -screenw / 4
-    // y - screeny / 2
+
+    @Override
+    public void setCollidable(boolean canCollide) {
+        this.collidable = canCollide;
+    }
+
+    @Override
+    public boolean isCollidable() {
+        return this.collidable;
+    }
+
+    @Override
+    public void handleCollision(Collidable cObj) {
+        if (cObj instanceof PowerUp) {
+            // alter paddle state by applying powerup
+        }
+    }
 
     @Override
     public String toString() {
@@ -159,5 +193,4 @@ public class Paddle extends MovableObject {
             g2d.drawRect(x, y, this.paddleImage.getWidth(), this.paddleImage.getHeight());
         }
     }
-
 }
