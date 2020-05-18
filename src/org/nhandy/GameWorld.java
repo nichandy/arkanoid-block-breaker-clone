@@ -1,6 +1,7 @@
 package org.nhandy;
 
 import org.nhandy.gameobjects.GameObject;
+import org.nhandy.gameobjects.Observer;
 import org.nhandy.gameobjects.movable.ball.Ball;
 import org.nhandy.gameobjects.movable.paddle.Paddle;
 import org.nhandy.gameobjects.movable.paddle.PaddleControl;
@@ -13,6 +14,10 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.ListIterator;
 
 
 /**
@@ -24,7 +29,7 @@ import java.util.ArrayList;
          (2) Add Arkinoid game objects
 
  */
-public class GameWorld extends JPanel  {
+public class GameWorld extends JPanel  implements Observable{
 
     private static boolean paused = false;
     public static float scale = 1.0f;
@@ -37,28 +42,9 @@ public class GameWorld extends JPanel  {
     private JFrame jFrame;
     private MapLoader mapLoader;
     private Paddle paddleOne;
+    private ArrayList<GameObject> gameObjects;
+    private List<Observer> observers;
     public static int framesPerSec;
-    ArrayList<GameObject> gameObjects;
-    // List<Collidable> collidableObjects;
-
-//    public int getState() {
-//        return state;
-//    }
-//    public void setState(int state) {
-//        this.state = state;
-//        this.notifyAllObserver();
-//    }
-//
-//    public void attach(Observer obv) {
-//        this.observers.add(obv);
-//    }
-//
-//    public void notifyAllObserver() {
-//        for (Observer observer: observers) {
-//            observer.update();
-//        }
-//    }
-
 
 
     public static void main(String[] args) {
@@ -90,12 +76,8 @@ public class GameWorld extends JPanel  {
                 render = true;
 
                 game.gameObjects.forEach(gameObject -> gameObject.update());
-
-
-//                game.cameraOne.update();
-//                game.cameraTwo.update();
-
-                // gameObjects.hasCollided()
+                game.notifyObservers();
+                //game.checkCollisions;
 
                 if (frameTime >= 1.0) {
                     frameTime = 0;
@@ -109,6 +91,15 @@ public class GameWorld extends JPanel  {
             if(render) {
                 game.repaint();
                 frames++;
+
+
+                ListIterator<GameObject> itr = game.gameObjects.listIterator();
+                while(itr.hasNext()) {
+                    GameObject gameObject = itr.next();
+                    if(!gameObject.isDrawable()) {
+                        itr.remove();
+                    }
+                }
             } else {
                 try {
                     Thread.sleep(1);
@@ -128,13 +119,15 @@ public class GameWorld extends JPanel  {
         this.world = new BufferedImage(GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT, BufferedImage.TYPE_INT_RGB);
         gameObjects = new ArrayList<>();
 
+        this.observers = Collections.synchronizedList(new ArrayList<>());
+
         Background background = new Background(0,0, Resource.getResourceImage("backgroundLevel1"));
         this.gameObjects.add(background);
 
         this.mapLoader = new MapLoader();
         this.mapLoader.loadMap(gameObjects);
 
-        paddleOne = new Paddle(GameConstants.WORLD_WIDTH/2, GameConstants.WORLD_HEIGHT-16, Resource.getResourceImage("defaultPaddle1A"));
+        paddleOne = new Paddle(GameConstants.WORLD_WIDTH/2 - 16, GameConstants.WORLD_HEIGHT-24, Resource.getResourceImage("defaultPaddle1A"));
 
         PaddleControl paddleOneControl = new PaddleControl(paddleOne,
                 KeyEvent.VK_LEFT,
@@ -142,7 +135,6 @@ public class GameWorld extends JPanel  {
                 KeyEvent.VK_SPACE);
 
 
-        this.gameObjects.add(paddleOne);
         this.gameObjects.add(paddleOne);
 
         Ball ballOne = new Ball(paddleOne.getX() + 16, paddleOne.getY(), Resource.getResourceImage("defaultBall"));
@@ -173,7 +165,7 @@ public class GameWorld extends JPanel  {
         buffer.setColor(Color.BLACK);
         buffer.fillRect(0,0, GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT);
 
-        this.gameObjects.forEach(gameObjects -> gameObjects.drawImage(buffer));
+        this.gameObjects.forEach(gameObjects -> gameObjects.Draw(buffer));
 
         g2.scale(4,4);
         g2.drawImage(world,0,0,null);
@@ -192,5 +184,41 @@ public class GameWorld extends JPanel  {
 //        g2.scale(1,1);
 
 
+    }
+
+    private void checkCollisions() {
+        /*
+            1. iterate through a list of collidable objects
+            2.
+         */
+    }
+
+    public synchronized void addDrawable(Drawable drawable) {
+        //this.drawables.add(drawable);
+    }
+
+    public synchronized void removeDrawable(Drawable drawable) {
+        //this.drawables.remove(drawable);
+    }
+    @Override
+    public void setChanged() {
+
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer obs : this.observers) {
+            obs.update(this);
+        }
+    }
+
+    @Override
+    public void attachObserver(Observer obs) {
+        this.observers.add(obs);
+    }
+
+    @Override
+    public void detachObserver(Observer obs) {
+        this.observers.remove(obs);
     }
 }

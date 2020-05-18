@@ -6,14 +6,16 @@ import java.awt.image.BufferedImage;
 public class Background extends StaticObject {
     int x, y;
     BufferedImage backgroundImage;
+    private boolean drawable;
 
     public Background(int x, int y, BufferedImage backgroundImage) {
         this.x = x;
         this.y = y;
         this.backgroundImage = backgroundImage;
+        this.drawable = true;
     }
 
-    public void drawImage(Graphics g) {
+    public void Draw(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
         g2d.drawImage(this.backgroundImage, x, y, null);
     }
@@ -26,5 +28,15 @@ public class Background extends StaticObject {
     @Override
     public Rectangle getHitBox() {
         return null;
+    }
+
+    @Override
+    public void setDrawable(boolean canDraw) {
+        this.drawable = canDraw;
+    }
+
+    @Override
+    public boolean isDrawable() {
+        return this.drawable;
     }
 }

@@ -25,6 +25,9 @@ public class Resource {
             Resource.resources.put("backgroundLevel4", spritesheet.getSubimage(672, 0, 224, 240));
             Resource.resources.put("backgroundLevel5", spritesheet.getSubimage(896, 0, 224, 240));
 
+            // Loading Hud Objects
+            Resource.resources.put("healthBar", spritesheet.getSubimage(592, 392, 16, 8));
+
             // Loading Paddle Sprites
             Resource.resources.put("defaultPaddle1A", spritesheet.getSubimage(560, 304, 32, 8));
             Resource.resources.put("defaultPaddle1B", spritesheet.getSubimage(592, 304, 32, 8));

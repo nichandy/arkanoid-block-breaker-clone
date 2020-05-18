@@ -1,6 +1,7 @@
 package org.nhandy.gameobjects.movable.paddle;
 
 import org.nhandy.GameConstants;
+import org.nhandy.gameobjects.hudobjects.HealthBar;
 import org.nhandy.gameobjects.movable.MovableObject;
 import org.nhandy.gameobjects.movable.projectiles.Bullet;
 import org.nhandy.resource_loaders.Resource;
@@ -15,11 +16,16 @@ public class Paddle extends MovableObject {
     private int x;
     private int y;
     private final int moveSpeed = 3;
+    private boolean drawable;
+    private int fireRate;
+    // shootDelay?
+    // some way to keep track of time?
 
     private Rectangle hitBox;
 
     private BufferedImage paddleImage;
     private ArrayList<Bullet> ammo;
+    private ArrayList<HealthBar> lives;
 
     private boolean RightPressed;
     private boolean LeftPressed;
@@ -32,6 +38,9 @@ public class Paddle extends MovableObject {
         this.paddleImage = paddleImage;
         this.hitBox = new Rectangle(x, y, this.paddleImage.getWidth(), this.paddleImage.getHeight());
         this.ammo = new ArrayList<>();
+        this.lives = new ArrayList<>();
+        setDrawable(true);
+        setLives(3);
     }
 
     public Rectangle getHitBox() {
@@ -63,22 +72,35 @@ public class Paddle extends MovableObject {
 
     public void update() {
 
-        if (this.LeftPressed) {
-            this.moveLeft();
-        }
-        if (this.RightPressed) {
-            this.moveRight();
-        }
-        this.hitBox.setLocation(x, y);
+        if(isDrawable()) {
+            if (this.LeftPressed) {
+                this.moveLeft();
+            }
+            if (this.RightPressed) {
+                this.moveRight();
+            }
+            this.hitBox.setLocation(x, y);
 
-        if (this.ShootPressed ) {
-            Bullet bullet = new Bullet(x,y, Resource.getResourceImage("defaultBullet"));
-            this.ammo.add(bullet);
+            if (this.ShootPressed ) {
+                Bullet bulletLeft = new Bullet((int) this.getHitBox().getCenterX() - 10,y, Resource.getResourceImage("defaultBullet"));
+                Bullet bulletRight = new Bullet((int) this.getHitBox().getCenterX() + 10,y, Resource.getResourceImage("defaultBullet"));
+                this.ammo.add(bulletLeft);
+                this.ammo.add(bulletRight);
+
+                this.lives.get(this.lives.size() - 1).setDrawable(false);
+            }
+            this.ammo.forEach(bullet -> bullet.update());
+
+            //System.out.println(this);
         }
-        this.ammo.forEach(bullet -> bullet.update());
 
-        //System.out.println(this);
+    }
 
+    public void setLives(int numberOfLives) {
+        for (int i = 0; i < numberOfLives; i++) {
+            HealthBar life = new HealthBar(10 + (i * 16), GameConstants.WORLD_HEIGHT - 12, Resource.getResourceImage("healthBar"));
+            this.lives.add(life);
+        }
     }
 
 
@@ -117,12 +139,25 @@ public class Paddle extends MovableObject {
     }
 
     @Override
-    public void drawImage(Graphics g) {
-        this.ammo.forEach(bullet -> bullet.drawImage(g));
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(this.paddleImage, this.x, this.y, null);
-        g2d.setColor(Color.CYAN);
-        g2d.drawRect(x,y, this.paddleImage.getWidth(), this.paddleImage.getHeight());
+    public void setDrawable(boolean canDraw) {
+        this.drawable = canDraw;
+    }
+
+    @Override
+    public boolean isDrawable() {
+        return this.drawable;
+    }
+
+    @Override
+    public void Draw(Graphics g) {
+        this.ammo.forEach(bullet -> bullet.Draw(g));
+        this.lives.forEach(life -> life.Draw(g));
+        if(isDrawable()) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.drawImage(this.paddleImage, this.x, this.y, null);
+            g2d.setColor(Color.CYAN);
+            g2d.drawRect(x, y, this.paddleImage.getWidth(), this.paddleImage.getHeight());
+        }
     }
 
 }

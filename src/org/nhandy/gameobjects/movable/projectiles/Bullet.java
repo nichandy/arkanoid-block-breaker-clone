@@ -12,14 +12,16 @@ public class Bullet extends MovableObject {
     private int y;
     private double moveSpeed = 5;
 
-    BufferedImage bulletImage;
-    Rectangle hitBox;
+    private BufferedImage bulletImage;
+    private Rectangle hitBox;
+    private boolean drawable;
 
     public Bullet(int x, int y, BufferedImage bulletImage) {
         this.x = x;
         this.y = y;
         this.bulletImage = bulletImage;
         this.hitBox = new Rectangle(x, y, this.bulletImage.getWidth(), this.bulletImage.getHeight());
+        setDrawable(true);
     }
 
     public Rectangle getHitBox() {
@@ -32,9 +34,11 @@ public class Bullet extends MovableObject {
     }
 
     public void update() {
-        moveForward();
-        checkBorder();
-        this.hitBox.setLocation(x, y);
+        if(isDrawable()) {
+            moveForward();
+            checkBorder();
+            this.hitBox.setLocation(x, y);
+        }
         //System.out.println(this);
     }
 
@@ -63,9 +67,22 @@ public class Bullet extends MovableObject {
                 '}';
     }
 
-    public void drawImage(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(this.bulletImage, this.x, this.y, null);
+    @Override
+    public void setDrawable(boolean canDraw) {
+        this.drawable = canDraw;
+    }
+
+    @Override
+    public boolean isDrawable() {
+        return this.drawable;
+    }
+
+
+    public void Draw(Graphics g) {
+        if(this.isDrawable()) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.drawImage(this.bulletImage, this.x, this.y, null);
+        }
 //        g2d.drawRect(x, y, this.bulletImage.getWidth(), this.bulletImage.getHeight());
 //        g2d.setColor(Color.CYAN);
 //        g2d.drawRect(x,y, this.bulletImage.getWidth(), this.bulletImage.getHeight());
