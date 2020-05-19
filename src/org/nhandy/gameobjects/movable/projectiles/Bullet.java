@@ -1,9 +1,11 @@
 package org.nhandy.gameobjects.movable.projectiles;
 
 import org.nhandy.GameConstants;
+import org.nhandy.GameWorld;
 import org.nhandy.Observable;
 import org.nhandy.gameobjects.Collidable;
 import org.nhandy.gameobjects.movable.MovableObject;
+import org.nhandy.gameobjects.movable.blocks.BreakBlock;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -43,9 +45,10 @@ public class Bullet extends MovableObject {
 
     @Override
     public void handleCollision(Collidable cObj) {
-//        if(cObj instanceof  Block) {
-//            // apply bullet damage, decrement block's life
-//        }
+        if(cObj instanceof BreakBlock) {
+            GameWorld.score = ((BreakBlock) cObj).getValue();
+            ((BreakBlock) cObj).setDrawable(false);
+        }
     }
 
     public void moveForward() {
@@ -58,8 +61,6 @@ public class Bullet extends MovableObject {
         if(isDrawable()) {
             moveForward();
             this.hitBox.setLocation(x, y);
-        } else {
-            obs.setChanged();
         }
     }
 

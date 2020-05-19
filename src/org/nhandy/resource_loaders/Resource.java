@@ -51,13 +51,13 @@ public class Resource {
             Resource.resources.put("defaultBlockYellow", spritesheet.getSubimage(784, 248, 16, 8));
 
             // Silver
-            Resource.resources.put("defaultBlockSilver1A ", spritesheet.getSubimage(736, 256, 16, 8));
+            Resource.resources.put("defaultBlockSilver1A", spritesheet.getSubimage(736, 256, 16, 8));
             Resource.resources.put("defaultBlockSilver1B", spritesheet.getSubimage(752, 256, 16, 8));
             Resource.resources.put("defaultBlockSilver1C", spritesheet.getSubimage(768, 256, 16, 8));
             Resource.resources.put("defaultBlockSilver1D", spritesheet.getSubimage(784, 256, 16, 8));
 
             // Gold
-            Resource.resources.put("defaultBlockGold1A ", spritesheet.getSubimage(736, 264, 16, 8));
+            Resource.resources.put("defaultBlockGold1A", spritesheet.getSubimage(736, 264, 16, 8));
             Resource.resources.put("defaultBlockGold1B", spritesheet.getSubimage(752, 264, 16, 8));
             Resource.resources.put("defaultBlockGold1C", spritesheet.getSubimage(768, 264, 16, 8));
             Resource.resources.put("defaultBlockGold1D", spritesheet.getSubimage(784, 264, 16, 8));

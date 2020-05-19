@@ -11,12 +11,14 @@ public class Background extends StaticObject {
     private int y;
     private BufferedImage backgroundImage;
     private boolean drawable;
+    private Rectangle hitBox;
 
     public Background(int x, int y, BufferedImage backgroundImage) {
         this.x = x;
         this.y = y;
         this.backgroundImage = backgroundImage;
         this.drawable = true;
+        this.hitBox = new Rectangle(x, y, this.backgroundImage.getWidth(), this.backgroundImage.getHeight());
     }
 
     public void Draw(Graphics g) {
@@ -30,7 +32,7 @@ public class Background extends StaticObject {
     // Background is not collidable
     @Override
     public Rectangle getHitBox() {
-        return null;
+        return this.hitBox.getBounds();
     }
 
     @Override

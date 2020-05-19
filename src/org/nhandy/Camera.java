@@ -1,6 +1,6 @@
 package org.nhandy;
 
-import org.nhandy.gameobjects.movable.paddle.Paddle;
+import org.nhandy.gameobjects.movable.paddles.Paddle;
 
 // TODO: Restructure camera to just support single screen or splitscreen
 public class Camera {

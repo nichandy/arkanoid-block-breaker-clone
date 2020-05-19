@@ -1,8 +1,10 @@
 package org.nhandy.resource_loaders;
 
+import org.nhandy.GameConstants;
 import org.nhandy.GameWorld;
 import org.nhandy.gameobjects.Collidable;
 import org.nhandy.gameobjects.Drawable;
+import org.nhandy.gameobjects.movable.blocks.BreakBlock;
 import org.nhandy.gameobjects.stationary.walls.unBreakWall;
 
 
@@ -53,6 +55,46 @@ public class MapLoader {
 //                            ShieldPowerUp sp = new ShieldPowerUp(curCol*32, curRow*32, Resource.getResourceImage("shieldPowerUp"));
 //                            gameObjects.add(sp);
 //                            break;
+                        case "BW":  BreakBlock blockWhite = new BreakBlock(curCol*8, curRow*8, GameConstants.BLOCK_TYPE.WHITE, Resource.getResourceImage("defaultBlockWhite"));
+                                    drawables.add(blockWhite);
+                                    collidables.add(blockWhite);
+                                    break;
+                        case "BO":  BreakBlock blockOrange = new BreakBlock(curCol*8, curRow*8, GameConstants.BLOCK_TYPE.ORANGE, Resource.getResourceImage("defaultBlockOrange"));
+                                    drawables.add(blockOrange);
+                                    collidables.add(blockOrange);
+                                    break;
+                        case "BC":  BreakBlock blockCyan = new BreakBlock(curCol*8, curRow*8, GameConstants.BLOCK_TYPE.CYAN, Resource.getResourceImage("defaultBlockCyan"));
+                                    drawables.add(blockCyan);
+                                    collidables.add(blockCyan);
+                                    break;
+                        case "BG":  BreakBlock blockGreen = new BreakBlock(curCol*8, curRow*8, GameConstants.BLOCK_TYPE.GREEN, Resource.getResourceImage("defaultBlockGreen"));
+                                    drawables.add(blockGreen);
+                                    collidables.add(blockGreen);
+                                    break;
+                        case "BR":  BreakBlock blockRed = new BreakBlock(curCol*8, curRow*8, GameConstants.BLOCK_TYPE.RED, Resource.getResourceImage("defaultBlockRed"));
+                                    drawables.add(blockRed);
+                                    collidables.add(blockRed);
+                                    break;
+                        case "BB":  BreakBlock blockBlue = new BreakBlock(curCol*8, curRow*8, GameConstants.BLOCK_TYPE.BLUE, Resource.getResourceImage("defaultBlockBlue"));
+                                    drawables.add(blockBlue);
+                                    collidables.add(blockBlue);
+                                    break;
+                        case "BP":  BreakBlock blockPink = new BreakBlock(curCol*8, curRow*8, GameConstants.BLOCK_TYPE.PINK, Resource.getResourceImage("defaultBlockPink"));
+                                    drawables.add(blockPink);
+                                    collidables.add(blockPink);
+                                    break;
+                        case "BY":  BreakBlock blockYellow = new BreakBlock(curCol*8, curRow*8, GameConstants.BLOCK_TYPE.YELLOW, Resource.getResourceImage("defaultBlockYellow"));
+                                    drawables.add(blockYellow);
+                                    collidables.add(blockYellow);
+                                    break;
+                        case "BAU": BreakBlock blockGold = new BreakBlock(curCol*8, curRow*8, GameConstants.BLOCK_TYPE.GOLD, Resource.getResourceImage("defaultBlockGold1A"));
+                                    drawables.add(blockGold);
+                                    collidables.add(blockGold);
+                                    break;
+                        case "BAG": BreakBlock blockSilver = new BreakBlock(curCol*8, curRow*8, GameConstants.BLOCK_TYPE.SILVER, Resource.getResourceImage("defaultBlockSilver1A"));
+                                    drawables.add(blockSilver);
+                                    collidables.add(blockSilver);
+                                    break;
                         case "WT":
                             unBreakWall ubWallTop = new unBreakWall(curCol*8, curRow*8, Resource.getResourceImage("unBreakWallTop"));
                             drawables.add(ubWallTop);

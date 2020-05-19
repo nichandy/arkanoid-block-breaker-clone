@@ -1,10 +1,9 @@
-package org.nhandy.gameobjects.movable.paddle;
+package org.nhandy.gameobjects.movable.paddles;
 
 import org.nhandy.GameConstants;
 import org.nhandy.GameWorld;
 import org.nhandy.Observable;
 import org.nhandy.gameobjects.Collidable;
-import org.nhandy.gameobjects.Observer;
 import org.nhandy.gameobjects.hudobjects.HealthBar;
 import org.nhandy.gameobjects.movable.MovableObject;
 import org.nhandy.gameobjects.movable.powerups.PowerUp;
@@ -22,9 +21,7 @@ public class Paddle extends MovableObject {
     private int y;
     private final int moveSpeed = 3;
     private int health = 3;
-    private int fireRate;
-    // shootDelay?
-    // some way to keep track of time?
+    private int fireRate = 30;
 
     private Rectangle hitBox;
 
@@ -46,6 +43,7 @@ public class Paddle extends MovableObject {
         this.hitBox = new Rectangle(x, y, this.paddleImage.getWidth(), this.paddleImage.getHeight());
         this.ammo = new ArrayList<>();
         this.lives = new ArrayList<>();
+        this.collidable = true;
         setDrawable(true);
         setLives(health);
     }
@@ -78,7 +76,7 @@ public class Paddle extends MovableObject {
 
 
     @Override
-    public void update(Observable obv) {
+    public void update(Observable obs) {
         // shootdelay incremented
 
         if(isDrawable()) {
@@ -92,17 +90,13 @@ public class Paddle extends MovableObject {
 
             if (this.ShootPressed) {
                 // Interrogate an observer to get details about its state
-                //long currentTick = ((GameWorld)obv).tick;
+                long currentTick = ((GameWorld)obs).tick;
 
-                /*
                 if (currentTick % fireRate == 0) {
-
+                    this.shoot();
                 }
-                 */
-                this.shoot();
-
             }
-            this.ammo.forEach(bullet -> bullet.update(obv));
+            this.ammo.forEach(bullet -> bullet.update(obs));
 
         }
 
@@ -169,7 +163,22 @@ public class Paddle extends MovableObject {
 
     @Override
     public String toString() {
-        return "x=" + x + ", y=" + y;
+        return "Paddle{" +
+                "x=" + x +
+                ", y=" + y +
+                ", moveSpeed=" + moveSpeed +
+                ", health=" + health +
+                ", fireRate=" + fireRate +
+                ", hitBox=" + hitBox +
+                ", paddleImage=" + paddleImage +
+                ", ammo=" + ammo +
+                ", lives=" + lives +
+                ", RightPressed=" + RightPressed +
+                ", LeftPressed=" + LeftPressed +
+                ", ShootPressed=" + ShootPressed +
+                ", collidable=" + collidable +
+                ", drawable=" + drawable +
+                '}';
     }
 
     @Override

@@ -1,12 +1,11 @@
 package org.nhandy;
 
 import org.nhandy.gameobjects.*;
-import org.nhandy.gameobjects.movable.ball.Ball;
-import org.nhandy.gameobjects.movable.paddle.Paddle;
-import org.nhandy.gameobjects.movable.paddle.PaddleControl;
+import org.nhandy.gameobjects.movable.balls.Ball;
+import org.nhandy.gameobjects.movable.paddles.Paddle;
+import org.nhandy.gameobjects.movable.paddles.PaddleControl;
 import org.nhandy.gameobjects.stationary.Background;
 import org.nhandy.gameobjects.stationary.StaticObject;
-import org.nhandy.gameobjects.stationary.walls.unBreakWall;
 import org.nhandy.resource_loaders.MapLoader;
 import org.nhandy.resource_loaders.Resource;
 
@@ -25,19 +24,16 @@ import java.util.ListIterator;
  * @author Nick Handy
  */
 
-/* TODO: (1) Modify camera class two support splitscreen but do not implement it yet
-         (2) Add Arkinoid game objects
-
- */
 public class GameWorld extends JPanel  implements Observable{
 
     private static boolean paused = false;
-    public static float scale = 1.0f;
+    public static int score = 0;
 
 //    private List<Observer> observers = new ArrayList<>();
     private int state;
 
     private BufferedImage world;
+    private BufferedImage scoreBoard;
     private Graphics2D buffer;
     private JFrame jFrame;
     private MapLoader mapLoader;
@@ -47,12 +43,12 @@ public class GameWorld extends JPanel  implements Observable{
     private List<Drawable> drawables;
     private CollisionHandler collisionHandler;
     public static int framesPerSec;
+    public long tick;
 
 
     public static void main(String[] args) {
         GameWorld game = new GameWorld();
         game.init();
-
 
         boolean render = false;
         double firstTime = 0.0;
@@ -78,13 +74,14 @@ public class GameWorld extends JPanel  implements Observable{
                 render = true;
 
                 game.notifyObservers();
-                //game.checkCollisions();
+                game.checkCollisions();
+                game.tick++;
 
                 if (frameTime >= 1.0) {
                     frameTime = 0;
                     framesPerSec = frames;
                     frames = 0;
-                    //System.out.printf("FPS: %d\n", framesPerSec);
+                    System.out.printf("FPS: %d\n", framesPerSec);
                 }
 
 
@@ -117,6 +114,7 @@ public class GameWorld extends JPanel  implements Observable{
 
     private void init() {
         this.jFrame = new JFrame("Doh Doh");
+        this.scoreBoard = new BufferedImage(GameConstants.WORLD_WIDTH, GameConstants.WORLD_V_OFFSET, BufferedImage.TYPE_INT_RGB);
         this.world = new BufferedImage(GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT, BufferedImage.TYPE_INT_RGB);
         collisionHandler = new CollisionHandler();
 
@@ -146,10 +144,18 @@ public class GameWorld extends JPanel  implements Observable{
         attachObserver(paddleOne);
 
         // Initializing Ball
-//        Ball ballOne = new Ball(paddleOne.getX() + 16, paddleOne.getY(), Resource.getResourceImage("defaultBall"));
-//        addDrawable(ballOne);
-//        addCollidable(ballOne);
-//        attachObserver(ballOne);
+        Ball ballOne = new Ball(paddleOne.getX() + 16, paddleOne.getY() - 4, Resource.getResourceImage("defaultBall"));
+        addDrawable(ballOne);
+        addCollidable(ballOne);
+        attachObserver(ballOne);
+
+//        ListIterator<Collidable> itr = collidables.listIterator();
+//        while(itr.hasNext()) {
+//            Collidable collidable = itr.next();
+//            if(collidable.isCollidable()) {
+//                System.out.println(collidable);
+//            }
+//        }
 
         this.jFrame.setLayout(new BorderLayout());
         this.jFrame.add(this);
@@ -164,22 +170,41 @@ public class GameWorld extends JPanel  implements Observable{
     }
 
 
+//    public void checkCollisions() {
+//
+//        for (Collidable cObjA : this.collidables) {
+//            if (!cObjA.isCollidable()) continue;
+//            if(cObjA instanceof StaticObject) continue; //IGNORE OBJECTS THAT DONT MOVE
+//            for (Collidable cObjB : this.collidables) {
+//                if(cObjA.equals(cObjB)) continue; // skip self collision check
+//                if(!cObjB.isCollidable()) continue; // skip check if object is colliding
+//                if(cObjB.getClass() == cObjA.getClass()) continue;
+//                if(cObjA.getHitBox().intersects(cObjB.getHitBox())) {
+//                    System.out.println("Object Collided");
+//                    System.out.println(cObjA);
+//                    cObjA.handleCollision(cObjB);
+//                }
+//            }
+//        }
+//
+//    }
+
     public void checkCollisions() {
-
         for (Collidable cObjA : this.collidables) {
-            // if cObjA is not collidable continue
-            if(cObjA instanceof StaticObject) continue; //IGNORE OBJECTS THAT DONT MOVE
-            for (Collidable cObjB : this.collidables) {
-                if(cObjA.equals(cObjB)) continue; // skip self collision check
-
-                if(!cObjB.isCollidable()) continue; // skip check if object is colliding
+            if(!cObjA.isCollidable()) continue;
+            if(cObjA instanceof StaticObject) continue;
+            for(Collidable cObjB : this.collidables) {
+                if(cObjA.equals(cObjB)) continue;
+                if(!cObjB.isCollidable()) continue;
                 if(cObjB.getClass() == cObjA.getClass()) continue;
-                if(cObjA.getHitBox().intersects(cObjB.getHitBox().getBounds())) {
-                    cObjA.handleCollision(cObjB);
+
+               // System.out.println("\n\n" + "Compared Objects" + "\n" +  cObjA.getClass() + "\n" + cObjB.getClass());
+                //System.out.println("\n" +  cObjA + "\n" + cObjB);
+                if(cObjA.getHitBox().getBounds().intersects(cObjB.getHitBox().getBounds())) {
+                    //System.out.println("Objects Collided");
                 }
             }
         }
-
     }
 
 
@@ -188,28 +213,30 @@ public class GameWorld extends JPanel  implements Observable{
         Graphics2D g2 = (Graphics2D) g;
         // Let UI Delegate paint first, which includes background filling since this component is opaque
         super.paintComponent(g2);
+
+        // Creating graphics for ScoreBoard
+        buffer = scoreBoard.createGraphics();
+        buffer.setColor(Color.BLACK);
+        buffer.fillRect(0,0, GameConstants.WORLD_WIDTH, GameConstants.WORLD_V_OFFSET);
+
+        // To setup scoreboard you must send buffered images to the buffer here
+
+
+        /*  Creating graphics for Game World
+
+            - Pushing world and scoreboard graphics separately
+             to the same buffer makes it possible to change where the world is drawn by just changing the World Vertical Offset
+            - This offset doesn't affect gameObjects who still see their rendering origin as (0,0)
+        */
         buffer = world.createGraphics();
         buffer.setColor(Color.BLACK);
-        buffer.fillRect(0,0, GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT);
+        buffer.fillRect(0,GameConstants.WORLD_V_OFFSET, GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT);
 
         this.drawables.forEach(drawable -> drawable.Draw(buffer));
 
-        g2.scale(4,4);
-        g2.drawImage(world,0,0,null);
-
-        // Multiplayer Cameras
-//        BufferedImage leftHalf = world.getSubimage(cameraOne.getCamX(),cameraOne.getCamY(),GameConstants.SCREEN_WIDTH/2, GameConstants.SCREEN_HEIGHT);
-//        BufferedImage rightHalf = world.getSubimage(cameraTwo.getCamX(),cameraTwo.getCamY(),GameConstants.SCREEN_WIDTH/2, GameConstants.SCREEN_HEIGHT);
-//
-//        BufferedImage miniMap = world.getSubimage(0,0,GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT);
-//        g2.drawImage(leftHalf,0,0,null);
-//        g2.drawImage(rightHalf,GameConstants.SCREEN_WIDTH/2 + 4,0,null);
-
-
-//        g2.scale(.1,.1);
-//        g2.drawImage(miniMap, 100, 7500, null);
-//        g2.scale(1,1);
-
+        g2.scale(GameConstants.WORLD_SCALE,GameConstants.WORLD_SCALE);
+        g2.drawImage(scoreBoard,0,0,null);
+        g2.drawImage(world,0,GameConstants.WORLD_V_OFFSET,null);
 
     }
 

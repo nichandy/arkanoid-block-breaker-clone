@@ -1,9 +1,11 @@
-package org.nhandy.gameobjects.movable.ball;
+package org.nhandy.gameobjects.movable.balls;
 
 import org.nhandy.GameConstants;
+import org.nhandy.GameWorld;
 import org.nhandy.Observable;
 import org.nhandy.gameobjects.Collidable;
 import org.nhandy.gameobjects.movable.MovableObject;
+import org.nhandy.gameobjects.movable.blocks.BreakBlock;
 import org.nhandy.gameobjects.movable.powerups.PowerUp;
 
 import java.awt.*;
@@ -16,19 +18,12 @@ public class Ball extends MovableObject {
     private int vx;
     private int vy;
     private int angle;
+    private int collisionTimer;
 
 
     private double moveSpeed = 1.0;
     private int damage = 10;
 
-    // TODO: Ball Elements
-    //      - Velocity tied to tick (Velocity is constant as it moves in open space)
-    //      - Rotation
-    //      - Spin?
-    //      - bounce angle
-    /*
-            Vector Reflections
-    */
 
     private BufferedImage ballImage;
     private Rectangle hitBox;
@@ -46,13 +41,21 @@ public class Ball extends MovableObject {
     }
 
     @Override
-    public void update(Observable obv) {
+    public void update(Observable obs) {
+        long currentTick = ((GameWorld)obs).tick;
+
+        if(collisionTimer > (currentTick % 20)) {
+            setCollidable(true);
+        }
+
         if(isDrawable()) {
             moveForward();
             checkBorder();
             this.hitBox.setLocation(x, y);
         }
-        System.out.println(this.toString());
+
+        if(!this.isCollidable()) collisionTimer++;
+        //System.out.println(this);
     }
 
     public Rectangle getHitBox() {
@@ -83,7 +86,7 @@ public class Ball extends MovableObject {
 
     public void startingAngle() {
         Random random = new Random();
-        switch (random.nextInt(1)) {
+        switch (random.nextInt(2)) {
             case 0: setAngle(315);
                     break;
             case 1: setAngle(225);
@@ -91,45 +94,28 @@ public class Ball extends MovableObject {
         }
     }
 
-    public void moveLeft() {
-        x -= moveSpeed;
-        checkBorder();
-    }
-
-    public void moveRight() {
-        x += moveSpeed;
-        checkBorder();
-    }
-
-
     public void checkBorder() {
-        if (x < 8) {
-            x = 8;
-            // TODO: angle reflection based on normal in line with x axis
-            setAngle(angle - 90);
-
-        }
-        if (x >= GameConstants.WORLD_WIDTH - (this.ballImage.getWidth() + 5)) {
-            x = GameConstants.WORLD_WIDTH - (this.ballImage.getWidth() + 5);
-            if(collidable) {
+        if(isCollidable()) {
+            if (x < 8) {
+                x = 8;
                 setAngle(angle - 90);
-                setCollidable(false);
-                System.out.println(this.angle);
+
             }
-
-            // TODO: angle reflection based on normal in line with -x axis
-        }
-        if (y < 7) {
-            y = 7;
-            setAngle(-angle);
-            // TODO: angle reflection based on normal in line with -y axis
-
-        }
-        if (y >= GameConstants.WORLD_HEIGHT - (this.ballImage.getHeight() / 2)) {
-            // TODO: send message that a ball has got past paddle. It will depend on the situation to decide what you need to do.
-            // TODO: Notify that a ball has been lost
-            //y = GameConstants.WORLD_HEIGHT - (this.ballImage.getHeight() / 2);
-            setDrawable(false);
+            if (x >= GameConstants.WORLD_WIDTH - (this.ballImage.getWidth() + 5)) {
+                x = GameConstants.WORLD_WIDTH - (this.ballImage.getWidth() + 5);
+                setAngle(angle - 90);
+            }
+            if (y < 7) {
+                y = 7;
+                setAngle(-angle);
+            }
+            if (y >= GameConstants.WORLD_HEIGHT - (this.ballImage.getHeight() / 2)) {
+                // TODO: send message that a ball has got past paddle. It will depend on the situation to decide what you need to do.
+                // TODO: Notify that a ball has been lost
+                //y = GameConstants.WORLD_HEIGHT - (this.ballImage.getHeight() / 2);
+                setDrawable(false);
+            }
+            setCollidable(false);
         }
     }
 
@@ -145,10 +131,17 @@ public class Ball extends MovableObject {
 
     @Override
     public void handleCollision(Collidable cObj) {
-//
+
+        if(cObj instanceof BreakBlock) {
+            System.out.println("Ball collided with BreakBlock");
+//            GameWorld.score = ((BreakBlock) cObj).getValue();
+//            ((BreakBlock) cObj).setDrawable(false);
+//            setCollidable(false);
+        }
         if (cObj instanceof PowerUp) {
             // alter paddle state by applying powerup
         }
+
     }
 
     @Override

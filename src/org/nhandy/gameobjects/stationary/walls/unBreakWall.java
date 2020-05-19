@@ -1,8 +1,9 @@
 package org.nhandy.gameobjects.stationary.walls;
 
 import org.nhandy.Observable;
-import org.nhandy.gameobjects.Drawable;
 import org.nhandy.gameobjects.Collidable;
+import org.nhandy.gameobjects.movable.balls.Ball;
+import org.nhandy.gameobjects.movable.projectiles.Bullet;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -14,6 +15,7 @@ public class unBreakWall extends Wall {
     private BufferedImage unBreakWallImage;
     private boolean drawable;
     private boolean collidable;
+    private Rectangle hitBox;
 
     public unBreakWall(int x, int y, BufferedImage unBreakWallImage) {
         this.x = x;
@@ -21,6 +23,7 @@ public class unBreakWall extends Wall {
         this.unBreakWallImage = unBreakWallImage;
         this.drawable = true;
         this.collidable = true;
+        this.hitBox = new Rectangle(x, y, this.unBreakWallImage.getWidth(), this.unBreakWallImage.getHeight());
     }
 
     public void Draw(Graphics g) {
@@ -33,13 +36,12 @@ public class unBreakWall extends Wall {
 
     }
 
-
     @Override
     public void update(Observable obv) {}
 
     @Override
     public Rectangle getHitBox() {
-        return null;
+        return this.hitBox.getBounds();
     }
 
 
@@ -53,7 +55,17 @@ public class unBreakWall extends Wall {
     }
 
 
-    public void handleCollision(Collidable cObj) {}
+    public void handleCollision(Collidable cObj) {
+        if(cObj instanceof Ball) {
+            setDrawable(false);
+            setCollidable(false);
+        }
+
+        if(cObj instanceof Bullet) {
+            setDrawable(false);
+            setCollidable(false);
+        }
+    }
 
 
     public void setDrawable(boolean canDraw) {
