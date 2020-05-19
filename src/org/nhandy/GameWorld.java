@@ -6,6 +6,7 @@ import org.nhandy.gameobjects.movable.paddle.Paddle;
 import org.nhandy.gameobjects.movable.paddle.PaddleControl;
 import org.nhandy.gameobjects.stationary.Background;
 import org.nhandy.gameobjects.stationary.StaticObject;
+import org.nhandy.gameobjects.stationary.walls.unBreakWall;
 import org.nhandy.resource_loaders.MapLoader;
 import org.nhandy.resource_loaders.Resource;
 
@@ -77,13 +78,13 @@ public class GameWorld extends JPanel  implements Observable{
                 render = true;
 
                 game.notifyObservers();
-                game.checkCollisions();
+                //game.checkCollisions();
 
                 if (frameTime >= 1.0) {
                     frameTime = 0;
                     framesPerSec = frames;
                     frames = 0;
-                    System.out.printf("FPS: %d\n", framesPerSec);
+                    //System.out.printf("FPS: %d\n", framesPerSec);
                 }
 
 
@@ -93,13 +94,13 @@ public class GameWorld extends JPanel  implements Observable{
                 frames++;
 
                 // Add and remove observers instead of iterating through observers
-//                ListIterator<GameObject> itr = game.gameObjects.listIterator();
-//                while(itr.hasNext()) {
-//                    GameObject gameObject = itr.next();
-//                    if(!gameObject.isDrawable()) {
-//                        itr.remove();
-//                    }
-//                }
+                ListIterator<Drawable> itr = game.drawables.listIterator();
+                while(itr.hasNext()) {
+                    Drawable drawable = itr.next();
+                    if(!drawable.isDrawable()) {
+                        itr.remove();
+                    }
+                }
             } else {
                 try {
                     Thread.sleep(1);
@@ -123,12 +124,13 @@ public class GameWorld extends JPanel  implements Observable{
         this.collidables = Collections.synchronizedList(new ArrayList<>());
         this.drawables = Collections.synchronizedList(new ArrayList<>());
 
-        Background background = new Background(0,0, Resource.getResourceImage("backgroundLevel1"));
+        Background background = new Background(8,8, Resource.getResourceImage("backgroundLevel1"));
         addDrawable(background);
 
         // Initialize Blocks
         this.mapLoader = new MapLoader();
         this.mapLoader.loadMap(drawables, collidables);
+
 
         // Initializing Paddle
         paddleOne = new Paddle(GameConstants.WORLD_WIDTH/2 - 16, GameConstants.WORLD_HEIGHT-24, Resource.getResourceImage("defaultPaddle1A"));
@@ -144,10 +146,10 @@ public class GameWorld extends JPanel  implements Observable{
         attachObserver(paddleOne);
 
         // Initializing Ball
-        Ball ballOne = new Ball(paddleOne.getX() + 16, paddleOne.getY(), Resource.getResourceImage("defaultBall"));
-        addDrawable(ballOne);
-        addCollidable(ballOne);
-        attachObserver(ballOne);
+//        Ball ballOne = new Ball(paddleOne.getX() + 16, paddleOne.getY(), Resource.getResourceImage("defaultBall"));
+//        addDrawable(ballOne);
+//        addCollidable(ballOne);
+//        attachObserver(ballOne);
 
         this.jFrame.setLayout(new BorderLayout());
         this.jFrame.add(this);

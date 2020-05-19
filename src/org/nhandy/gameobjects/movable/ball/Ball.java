@@ -8,13 +8,14 @@ import org.nhandy.gameobjects.movable.powerups.PowerUp;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 public class Ball extends MovableObject {
     private int x;
     private int y;
     private int vx;
     private int vy;
-    private int angle = -90;
+    private int angle;
 
 
     private double moveSpeed = 1.0;
@@ -40,13 +41,18 @@ public class Ball extends MovableObject {
         this.ballImage = ballImage;
         this.hitBox = new Rectangle(x, y, this.ballImage.getWidth() - 3, this.ballImage.getHeight()/2); // sprite is 8x8, hitbox is 5x4
         setDrawable(true);
+        setCollidable(true);
+        startingAngle();
     }
 
     @Override
     public void update(Observable obv) {
-        moveForward();
-        checkBorder();
-        this.hitBox.setLocation(x, y);
+        if(isDrawable()) {
+            moveForward();
+            checkBorder();
+            this.hitBox.setLocation(x, y);
+        }
+        System.out.println(this.toString());
     }
 
     public Rectangle getHitBox() {
@@ -75,6 +81,16 @@ public class Ball extends MovableObject {
         this.angle = angle;
     }
 
+    public void startingAngle() {
+        Random random = new Random();
+        switch (random.nextInt(1)) {
+            case 0: setAngle(315);
+                    break;
+            case 1: setAngle(225);
+                    break;
+        }
+    }
+
     public void moveLeft() {
         x -= moveSpeed;
         checkBorder();
@@ -90,13 +106,22 @@ public class Ball extends MovableObject {
         if (x < 8) {
             x = 8;
             // TODO: angle reflection based on normal in line with x axis
+            setAngle(angle - 90);
+
         }
         if (x >= GameConstants.WORLD_WIDTH - (this.ballImage.getWidth() + 5)) {
             x = GameConstants.WORLD_WIDTH - (this.ballImage.getWidth() + 5);
+            if(collidable) {
+                setAngle(angle - 90);
+                setCollidable(false);
+                System.out.println(this.angle);
+            }
+
             // TODO: angle reflection based on normal in line with -x axis
         }
         if (y < 7) {
             y = 7;
+            setAngle(-angle);
             // TODO: angle reflection based on normal in line with -y axis
 
         }
@@ -120,6 +145,7 @@ public class Ball extends MovableObject {
 
     @Override
     public void handleCollision(Collidable cObj) {
+//
         if (cObj instanceof PowerUp) {
             // alter paddle state by applying powerup
         }
@@ -127,11 +153,15 @@ public class Ball extends MovableObject {
 
     @Override
     public String toString() {
-        return "ball{" +
+        return "Ball{" +
                 "x=" + x +
                 ", y=" + y +
-                ", ballImage=" + ballImage +
-                ", hitBox=" + hitBox +
+                ", vx=" + vx +
+                ", vy=" + vy +
+                ", angle=" + angle +
+                ", moveSpeed=" + moveSpeed +
+                ", drawable=" + drawable +
+                ", collidable=" + collidable +
                 '}';
     }
 

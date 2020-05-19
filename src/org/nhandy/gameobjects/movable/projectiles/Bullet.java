@@ -54,10 +54,12 @@ public class Bullet extends MovableObject {
     }
 
     @Override
-    public void update(Observable obv) {
+    public void update(Observable obs) {
         if(isDrawable()) {
             moveForward();
             this.hitBox.setLocation(x, y);
+        } else {
+            obs.setChanged();
         }
     }
 

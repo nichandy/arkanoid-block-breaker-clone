@@ -7,8 +7,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Background extends StaticObject {
-    int x, y;
-    BufferedImage backgroundImage;
+    private int x;
+    private int y;
+    private BufferedImage backgroundImage;
     private boolean drawable;
 
     public Background(int x, int y, BufferedImage backgroundImage) {

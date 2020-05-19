@@ -19,11 +19,16 @@ public class Resource {
             BufferedImage spritesheet = ImageIO.read(GameWorld.class.getClassLoader().getResource("spritesheet.png"));
 
             // Loading Game World Sprites
-            Resource.resources.put("backgroundLevel1", spritesheet.getSubimage(0, 0, 224, 240));
-            Resource.resources.put("backgroundLevel2", spritesheet.getSubimage(224, 0, 224, 240));
-            Resource.resources.put("backgroundLevel3", spritesheet.getSubimage(448, 0, 224, 240));
-            Resource.resources.put("backgroundLevel4", spritesheet.getSubimage(672, 0, 224, 240));
-            Resource.resources.put("backgroundLevel5", spritesheet.getSubimage(896, 0, 224, 240));
+            Resource.resources.put("backgroundLevel1", spritesheet.getSubimage(8, 8, 208, 232));
+            Resource.resources.put("backgroundLevel2", spritesheet.getSubimage(232, 8, 208, 232));
+            Resource.resources.put("backgroundLevel3", spritesheet.getSubimage(456, 8, 208, 232));
+            Resource.resources.put("backgroundLevel4", spritesheet.getSubimage(680, 8, 208, 232));
+            Resource.resources.put("backgroundLevel5", spritesheet.getSubimage(904, 8, 208, 232));
+
+            // Loading Vertical and Horizontal Walls
+            Resource.resources.put("unBreakWallTop", spritesheet.getSubimage(0  , 0, 224 , 8));
+            Resource.resources.put("unBreakWallLeft", spritesheet.getSubimage(0, 8, 8, 232));
+            Resource.resources.put("unBreakWallRight", spritesheet.getSubimage(216, 8, 8, 232));
 
             // Loading Hud Objects
             Resource.resources.put("healthBar", spritesheet.getSubimage(592, 392, 16, 8));
