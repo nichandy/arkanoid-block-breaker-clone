@@ -16,13 +16,23 @@ import java.util.ArrayList;
 
 public class Paddle extends MovableObject {
 
-
+    // Paddle Current Position
     private int x;
     private int y;
+
+    // Paddle Velocity (Vector Magnitude)
+    private double vel;
+
+    // Paddle Vector
+    private double Vx;
+    private double Vy;
+
+    // Paddle Game Attributes
     private final int moveSpeed = 3;
     private int health = 3;
     private int fireRate = 30;
 
+    //
     private Rectangle hitBox;
 
     private BufferedImage paddleImage;
@@ -86,7 +96,6 @@ public class Paddle extends MovableObject {
             if (this.RightPressed) {
                 this.moveRight();
             }
-            this.hitBox.setLocation(x, y);
 
             if (this.ShootPressed) {
                 // Interrogate an observer to get details about its state
