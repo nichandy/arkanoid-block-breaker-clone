@@ -6,7 +6,7 @@ import org.nhandy.gameobjects.Collidable;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Background extends StaticObject {
+public class Background extends StationaryObject {
     private int x;
     private int y;
     private BufferedImage backgroundImage;

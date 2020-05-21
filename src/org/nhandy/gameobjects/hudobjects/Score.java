@@ -1,22 +1,20 @@
 package org.nhandy.gameobjects.hudobjects;
 
 import org.nhandy.Observable;
-import org.nhandy.gameobjects.Observer;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class HealthBar extends hudObject {
-
+public class Score extends hudObject {
     private int x;
     private int y;
-    private BufferedImage healthImage;
+    private BufferedImage scoreImage;
     private boolean drawable;
 
-    public HealthBar(int x, int y, BufferedImage healthImage) {
+    public Score(int x, int y, BufferedImage scoreImage) {
         this.x = x;
         this.y = y;
-        this.healthImage = healthImage;
+        this.scoreImage = scoreImage;
         setDrawable(true);
     }
 
@@ -40,13 +38,14 @@ public class HealthBar extends hudObject {
     public void Draw(Graphics g) {
         if(isDrawable()) {
             Graphics2D g2d = (Graphics2D) g;
-            g2d.drawImage(this.healthImage, this.x, this.y, null);
+            g2d.drawImage(this.scoreImage, this.x, this.y, null);
         }
     }
 
 
     @Override
     public void update(Observable obv) {}
+
 
     @Override
     public void setDrawable(boolean canDraw) {
@@ -57,6 +56,5 @@ public class HealthBar extends hudObject {
     public boolean isDrawable() {
         return this.drawable;
     }
-
 
 }

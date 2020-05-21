@@ -4,6 +4,6 @@ import org.nhandy.Observable;
 
 public interface Observer {
 
-    void update(Observable obv);
+    void update(Observable obs);
 
 }

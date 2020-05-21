@@ -21,11 +21,16 @@ public class Paddle extends MovableObject {
     private int y;
 
     // Paddle Velocity (Vector Magnitude)
-    private double vel;
+    private int velocity = 3;
 
     // Paddle Vector
-    private double Vx;
-    private double Vy;
+    private int vx;
+    private int vy; // Not used at the moment
+
+    // Normal Vector
+    // Will be used to compare with during collisions
+    private int nx;
+    private int ny;
 
     // Paddle Game Attributes
     private final int moveSpeed = 3;
@@ -44,15 +49,22 @@ public class Paddle extends MovableObject {
     private boolean ShootPressed;
     private boolean collidable;
     private boolean drawable;
+    private boolean weaponActive;
 
 
     public Paddle(int x, int y, BufferedImage paddleImage) {
         this.x = x;
         this.y = y;
+        this.vx = 0;
+        this.vy = 0;
+
         this.paddleImage = paddleImage;
         this.hitBox = new Rectangle(x, y, this.paddleImage.getWidth(), this.paddleImage.getHeight());
+
+        this.weaponActive = false;
         this.ammo = new ArrayList<>();
         this.lives = new ArrayList<>();
+
         this.collidable = true;
         setDrawable(true);
         setLives(health);
@@ -88,18 +100,20 @@ public class Paddle extends MovableObject {
     @Override
     public void update(Observable obs) {
         // shootdelay incremented
+        // Interrogate an observer to get details about its state
+        long currentTick = ((GameWorld)obs).tick;
 
         if(isDrawable()) {
             if (this.LeftPressed) {
                 this.moveLeft();
-            }
-            if (this.RightPressed) {
+            } else if (this.RightPressed) {
                 this.moveRight();
+            } else {
+                this.vx = 0;
             }
+            this.hitBox.setLocation(x, y);
 
-            if (this.ShootPressed) {
-                // Interrogate an observer to get details about its state
-                long currentTick = ((GameWorld)obs).tick;
+            if (isWeaponActive() && this.ShootPressed) {
 
                 if (currentTick % fireRate == 0) {
                     this.shoot();
@@ -111,14 +125,26 @@ public class Paddle extends MovableObject {
 
     }
 
-    public void setLives(int numberOfLives) {
+    private void setLives(int numberOfLives) {
         for (int i = 0; i < numberOfLives; i++) {
             HealthBar life = new HealthBar(10 + (i * 16), GameConstants.WORLD_HEIGHT - 12, Resource.getResourceImage("healthBar"));
             this.lives.add(life);
         }
     }
 
-    public void shoot() {
+    private void addLife() {
+        HealthBar life = new HealthBar(10 + ((this.lives.size()-1) * 16), GameConstants.WORLD_HEIGHT - 12, Resource.getResourceImage("healthBar"));
+        this.lives.add(life);
+    }
+
+    private void removeLife() {
+        this.setDrawable(false);
+        if (this.lives.get(this.lives.size()-1).isDrawable()) {
+            setDrawable(false);
+        }
+    }
+
+    private void shoot() {
         Bullet bulletLeft = new Bullet((int) this.getHitBox().getCenterX() - 10,y, Resource.getResourceImage("defaultBullet"));
         Bullet bulletRight = new Bullet((int) this.getHitBox().getCenterX() + 10,y, Resource.getResourceImage("defaultBullet"));
         this.ammo.add(bulletLeft);
@@ -127,12 +153,14 @@ public class Paddle extends MovableObject {
 
 
     private void moveLeft() {
-        this.x -= moveSpeed;
+        this.vx = -velocity;
+        this.x += this.vx;
         checkBorder();
     }
 
     private void moveRight() {
-        this.x += moveSpeed;
+        this.vx = velocity;
+        this.x += this.vx;
         checkBorder();
     }
 
@@ -168,6 +196,10 @@ public class Paddle extends MovableObject {
         if (cObj instanceof PowerUp) {
             // alter paddle state by applying powerup
         }
+    }
+
+    public boolean isWeaponActive() {
+        return this.weaponActive;
     }
 
     @Override
@@ -207,8 +239,8 @@ public class Paddle extends MovableObject {
         if(isDrawable()) {
             Graphics2D g2d = (Graphics2D) g;
             g2d.drawImage(this.paddleImage, this.x, this.y, null);
-            g2d.setColor(Color.CYAN);
-            g2d.drawRect(x, y, this.paddleImage.getWidth(), this.paddleImage.getHeight());
+            //g2d.setColor(Color.CYAN);
+            //g2d.drawRect(x, y, this.paddleImage.getWidth(), this.paddleImage.getHeight());
         }
     }
 }

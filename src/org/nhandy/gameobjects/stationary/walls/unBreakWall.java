@@ -30,8 +30,8 @@ public class unBreakWall extends Wall {
         if(isDrawable()) {
             Graphics2D g2d = (Graphics2D)g;
             g2d.drawImage(this.unBreakWallImage, this.x, this.y, null);
-            g2d.setColor(Color.RED);
-            g2d.drawRect(x, y, this.unBreakWallImage.getWidth(), this.unBreakWallImage.getHeight());
+            //g2d.setColor(Color.RED);
+            //g2d.drawRect(x, y, this.unBreakWallImage.getWidth(), this.unBreakWallImage.getHeight());
         }
 
     }
@@ -56,15 +56,6 @@ public class unBreakWall extends Wall {
 
 
     public void handleCollision(Collidable cObj) {
-        if(cObj instanceof Ball) {
-            setDrawable(false);
-            setCollidable(false);
-        }
-
-        if(cObj instanceof Bullet) {
-            setDrawable(false);
-            setCollidable(false);
-        }
     }
 
 

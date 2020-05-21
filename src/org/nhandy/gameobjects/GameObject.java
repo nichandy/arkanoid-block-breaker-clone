@@ -6,9 +6,7 @@ import java.awt.*;
 
 public abstract class GameObject implements Drawable, Observer {
 
-    public abstract void update(Observable obv);
-
-    public abstract Rectangle getHitBox();
+    public abstract void update(Observable obs);
 
     public abstract void Draw(Graphics g);
 

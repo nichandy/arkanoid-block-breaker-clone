@@ -80,9 +80,24 @@ public class Resource {
             Resource.resources.put("poweredBall", spritesheet.getSubimage(592, 384, 8, 8));
 
             // Loading Bullet Resource
-            // TODO: Separate Left and Right Bullet
             Resource.resources.put("defaultBullet", spritesheet.getSubimage(608, 384, 3, 8)); // 5x4 starting at origin of the sprite
             Resource.resources.put("powerUpBullet1", spritesheet.getSubimage(621, 384, 3, 8));
+
+            // Load Font Sprites
+            Resource.resources.put("0", spritesheet.getSubimage(880, 384, 8, 8));
+            Resource.resources.put("1", spritesheet.getSubimage(888, 384, 8, 8));
+            Resource.resources.put("2", spritesheet.getSubimage(896, 384, 8, 8));
+            Resource.resources.put("3", spritesheet.getSubimage(904, 384, 8, 8));
+            Resource.resources.put("4", spritesheet.getSubimage(912, 384, 8, 8));
+            Resource.resources.put("5", spritesheet.getSubimage(920, 384, 8, 8));
+            Resource.resources.put("6", spritesheet.getSubimage(928, 384, 8, 8));
+            Resource.resources.put("7", spritesheet.getSubimage(936, 384, 8, 8));
+            Resource.resources.put("8", spritesheet.getSubimage(944, 384, 8, 8));
+            Resource.resources.put("9", spritesheet.getSubimage(952, 384, 8, 8));
+
+            // HighScore Label
+            Resource.resources.put("highScore", spritesheet.getSubimage(880, 424, 72, 8));
+
 
         } catch (IOException e) {
             e.printStackTrace();
