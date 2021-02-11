@@ -19,12 +19,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
-
 /**
-
- * @author Nick Handy
+ * <h1>Java Arkanoid Clone for CSC 413 Term Project</h1>
+ * Arkanoid is a block breaker game where the player must
+ * destroy all the bricks in each level to accumulate the highest score
+ * <p>
+ * Additional info...
+ *
+ *
+ * @author  Nick Handy
+ * @version 1.0
+ * @date   05-20-20
+ *
+ *
+ * The GameWorld
+ * @param args Unused.
+ * @return Nothing.
+ * @exception IOException On input error.
+ * @see IOException
  */
-
 public class GameWorld extends JPanel  implements Observable{
 
     private static boolean paused = false;
@@ -190,6 +203,7 @@ public class GameWorld extends JPanel  implements Observable{
         // Let UI Delegate paint first, which includes background filling since this component is opaque
         super.paintComponent(g2);
 
+        g2.scale(GameConstants.WORLD_SCALE, GameConstants.WORLD_SCALE);
         // Creating graphics for ScoreBoard
         buffer = scoreBoard.createGraphics();
         buffer.setColor(Color.BLACK);
@@ -197,7 +211,7 @@ public class GameWorld extends JPanel  implements Observable{
         buffer.setColor(Color.GREEN);
         //buffer.drawLine(0,0, GameConstants.WORLD_WIDTH, GameConstants.WORLD_V_OFFSET);
 
-        g2.scale(GameConstants.WORLD_SCALE, GameConstants.WORLD_SCALE);
+
         this.hudObjects.forEach(hudObject -> hudObject.Draw(buffer));
         //buffer.drawImage(this.highScoreBannerImage,0,0,null);
         //this.highScoreBanner.Draw(buffer);

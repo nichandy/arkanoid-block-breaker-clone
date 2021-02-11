@@ -15,6 +15,10 @@ public class GameConstants {
     public static final int SCREEN_WIDTH = WORLD_SCALE * WORLD_WIDTH; // predetermined world scaling of 4
     public static final int SCREEN_HEIGHT = WORLD_SCALE * (WORLD_HEIGHT + WORLD_V_OFFSET); // predetermined world scaling of 4
     public static final double UPDATE_CAP = 1.0 / 144.0;
+    public static final double WORLD_ORIGIN_X = 0;
+    public static final double WORLD_ORIGIN_Y = 0;
+    public static final double COORDINATE_ORIGIN_X = SCREEN_WIDTH / 2;
+    public static final double COORDINATE_ORIGIN_Y = SCREEN_HEIGHT / 2;
 
     public enum BLOCK_TYPE {
         WHITE, ORANGE, CYAN, GREEN, RED, BLUE, PINK, YELLOW, SILVER, GOLD

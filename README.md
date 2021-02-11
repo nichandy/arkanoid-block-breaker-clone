@@ -1,5 +1,4 @@
-# csc413-SecondGame
-
-## Student Name  : Nick Handy
-## Student ID    : 918790657
+# Arkanoid Clone
+## Description
+The goal of this project was to recreate the classic arkanoid block breaker game in java.
 
